@@ -2,11 +2,12 @@
 
 <html>
     <head>
-        <title>Grosaleries</title>
+        <title>GroSaleries</title>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" />
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
         <style>
+
             #result {
                 position: absolute;
                 width: 100%;
@@ -16,18 +17,37 @@
                 box-sizing: border-box;
                 z-index: 1001;
             }
-            th:first-child, td:first-child {
-                width: 550px;
+
+            h2 {
+                color: #83C73D;
             }
-            th:nth-of-type(2), td:nth-of-type(2), th:last-child, td:last-child {
+
+            p {
+                color: #A4D375;
+            }
+            
+            span {
+                color: #538A1D;
+            }
+
+            th:first-child, td:first-child {
                 width: 200px;
             }
+
+            th:nth-of-type(2), td:nth-of-type(2) {
+                width: 700px;
+            }
+
+            th:last-child, td:last-child {
+                width: 200px;
+            }
+
         </style>
     </head>
     <body>
         <br /><br />
         <div class="container" style="width:900px;">
-            <h2 align="center">Grosaleries</h2>
+            <h2 align="center">Gro<span>Sale</span>ries</h2>
             <p align="center">The best deals from your favourite grocers</p>
             <br /><br />
             <div align="center">
@@ -38,9 +58,9 @@
                 <table class="table table bordered">
                     <thead>
                         <tr>
+                            <th>Supermarket</th>
                             <th>Product</th>
-                            <th>Woolworths</th>
-                            <th>Coles</th>
+                            <th>Price</th>
                         </tr>
                     </thead>
                     <tbody id="result"></tbody>
@@ -53,16 +73,16 @@
 <script>
     $(document).ready(function(){
         $.ajaxSetup({ cache: false });
-        $('#search').keyup(function(){ // whenever a character is typed under search, the function will be executed
-            $('#result').html(''); // clears html code with the result
-            var searchField = $('#search').val(); // gets the value of the search and stores it in the variable
+        $('#search').keyup(function(){
+            $('#result').html('');
+            var searchField = $('#search').val();
             var expression = new RegExp(searchField, "i"); // performs case-insensitive matching
             $.getJSON('https://swe20001.herokuapp.com/api/products/?format=json', function(data) {
                 $('#result').empty();
                 $.each(data.results, function(key, value){ 
                     if (value.name.search(expression) != -1)
                     {
-                        $('#result').append("<tr><td>" + value.name + "</td><td>" + "$1.99" + "</td><td>" + "$2.25" + "</td></tr>");
+                        $('#result').append("<tr><td>" + value.seller.name + "</td><td>" + value.name + "</td><td>" + "$2.25" + "</td></tr>");
                     }
                 });
             });
