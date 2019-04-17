@@ -72,12 +72,14 @@
 
 <script>
     $(document).ready(function(){
-        $.ajaxSetup({ cache: false });
+        $.ajaxSetup({ cache: false }); //forces requested pages not to be cached by the browser.
         $('#search').keyup(function(){
-            $('#result').html('');
+            $('#result').append('');
             var searchField = $('#search').val();
             var expression = new RegExp(searchField, "i"); // performs case-insensitive matching
-            $.getJSON('https://swe20001.herokuapp.com/api/products/?format=json', function(data) {
+            var jsonURL = 'https://swe20001.herokuapp.com/api/products/?search=';
+            var searchQuery = jsonURL + searchField;
+            $.getJSON(searchQuery, function(data) {
                 $('#result').empty();
                 $.each(data.results, function(key, value){ 
                     if (value.name.search(expression) != -1)
