@@ -1,93 +1,255 @@
 <!DOCTYPE html>
 
 <html>
-    <head>
-        <title>GroSaleries</title>
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" />
-        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-        <style>
 
-            #result {
-                position: absolute;
-                width: 100%;
-                max-width:870px;
-                overflow-y: auto;
-                max-height: 350px;
-                box-sizing: border-box;
-                z-index: 1001;
-            }
+<head>
+    <title>GroSaleries</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css"
+        integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <style>
+        #result {
+            position: absolute;
+            width: 100%;
+            max-width: 870px;
+            overflow-y: auto;
+            height: auto;
+            max-height: 350px;
+            box-sizing: border-box;
+            z-index: 1001;
+        }
 
-            h2 {
-                color: #83C73D;
-            }
+        h2 {
+            color: #83C73D;
+        }
 
-            p {
-                color: #A4D375;
-            }
-            
-            span {
-                color: #538A1D;
-            }
+        p {
+            color: #A4D375;
+        }
 
-            th:first-child, td:first-child {
-                width: 200px;
-            }
+        span {
+            color: #538A1D;
+        }
 
-            th:nth-of-type(2), td:nth-of-type(2) {
-                width: 700px;
-            }
+        th:first-child,
+        td:first-child {
+            width: 200px;
+        }
 
-            th:last-child, td:last-child {
-                width: 200px;
-            }
+        th:nth-of-type(2),
+        td:nth-of-type(2) {
+            width: 700px;
+        }
 
-        </style>
-    </head>
-    <body>
+        th:last-child,
+        td:last-child {
+            width: 200px;
+        }
+
+        #loading-sign,
+        #not-found {
+            padding: 30px 0;
+            text-align: center;
+            font-size: 30px;
+        }
+    </style>
+</head>
+
+<body>
+    <br /><br />
+    <div class="container" style="width:900px;">
+        <h2 align="center">Gro<span>Sale</span>ries</h2>
+        <p align="center">The best deals from your favourite grocers</p>
         <br /><br />
-        <div class="container" style="width:900px;">
-            <h2 align="center">Gro<span>Sale</span>ries</h2>
-            <p align="center">The best deals from your favourite grocers</p>
-            <br /><br />
-            <div align="center">
-                <input type="text" name="search" id="search" placeholder="Enter grocery item here..." class="form-control" />
-            </div>
-            <br />
-            <div class="table-responsive">
-                <table class="table table bordered">
-                    <thead>
-                        <tr>
-                            <th>Supermarket</th>
-                            <th>Product</th>
-                            <th>Price</th>
-                        </tr>
-                    </thead>
-                    <tbody id="result"></tbody>
-                </table>
+        <div align="center">
+            <input type="text" name="search" id="search" placeholder="Enter grocery item here..."
+                class="form-control" />
+        </div>
+        <br />
+        <div class="table-responsive">
+            <table class="table table bordered">
+                <thead>
+                    <tr>
+                        <th>Supermarket</th>
+                        <th>Product</th>
+                        <th>Price</th>
+                    </tr>
+                </thead>
+                <tbody id="result"></tbody>
+            </table>
             <br />
         </div>
-    </body>
+</body>
+
 </html>
 
 <script>
-    $(document).ready(function(){
-        $.ajaxSetup({ cache: false }); //forces requested pages not to be cached by the browser.
-        $('#search').keyup(function(){
-            $('#result').append('');
-            var searchField = $('#search').val();
-            var expression = new RegExp(searchField, "i"); // performs case-insensitive matching
-            var jsonURL = 'https://swe20001.herokuapp.com/api/products/?search=';
-            var searchQuery = jsonURL + searchField;
-            $.getJSON(searchQuery, function(data) {
-                $('#result').empty();
-                $.each(data.results, function(key, value){ 
-                    if (value.name.search(expression) != -1)
-                    {
-                        $('#result').append("<tr><td>" + value.seller.name + "</td><td>" + value.name + "</td><td>" + "$2.25" + "</td></tr>");
-                    }
-                });
+    $(document).ready(function () {
+        $.ajaxSetup({
+            cache: false
+        }); //forces requested pages not to be cached by the browser.
+
+        var pageNumber = 1;
+        var resultArray = [];
+        var searchField = $('#search');
+        var resultContainer = $('#result');
+        var moreAvailable = true;
+        var values = ""
+        var doneLoading = true; // determine whether to display loading sign or not
+
+        function populateResults() {
+            // after done fetching results, remove loading sign
+            removeLoadingSign();
+
+            // map out results
+            resultArray.forEach(element => {
+                // if price does not have $, add $ to the front
+                // if price is null, display NA
+                var resultElmt =
+                    `<tr>
+                    <td>${element.seller.name} - ${element.id} </td>
+                    <td>${element.name}</td>
+                    <td>${element.price[0] === "$" ? "" : "$"}${element.price ? element.price : "NA"}</td>
+                    </tr>`;
+
+                $(resultContainer).append(resultElmt);
             });
+
+            doneLoading = true;
+        }
+
+        // clear result div
+        function clearResults() {
+            $(resultContainer).empty();
+        }
+
+        // add data to result array
+        function addToArray(objs) {
+            objs.forEach(element => {
+                resultArray.push(element);
+            });
+        }
+
+        // clear result array
+        function clearArray() {
+            resultArray.length = 0;
+        }
+
+        // add loading sign to result div
+        function displayLoadingSign() {
+            let loadingSign = document.getElementById("loading-sign");
+            if (!loadingSign) {
+                var resultElmt =
+                    `<div id="loading-sign"><div><i class="fas fa-spinner fa-spin"></i></div><div>Searching...</div></div>`;
+
+                $(resultContainer).append(resultElmt);
+            }
+        }
+
+        // remove loading sign from result div
+        function removeLoadingSign() {
+            let loadingSign = document.getElementById("loading-sign");
+            if (loadingSign) {
+                loadingSign.remove();
+            }
+        }
+
+        // add "item not found" to result div
+        function displayNoneResult() {
+            let notFound = document.getElementById("not-found");
+            if (!notFound) {
+                var resultElmt =
+                    `<div id="not-found">Item not found!</div>`;
+
+                $(resultContainer).append(resultElmt);
+            }
+        }
+
+        // remove "item not found" from result div
+        function removeNoneResult() {
+            let notFound = document.getElementById("not-found");
+            if (notFound) {
+                notFound.remove();
+            }
+        }
+
+        // request data from API
+        function getResults(searchQuery, pageNumber = 1) {
+            var jsonURL =
+                `https://swe20001.herokuapp.com/api/products/?search=${searchQuery}&page=${pageNumber}`;
+
+            $.getJSON(jsonURL, function (data) {
+                    // if data exists
+                    if (data.count > 0) {
+                        removeNoneResult();
+                        if (resultArray.length <= data.count) {
+                            addToArray(data.results);
+                        }
+
+                        if (data.next == null) {
+                            moreAvailable = false;
+                        }
+                    } else {
+                        displayNoneResult();
+                    }
+                })
+                .done(function (data) {
+                    populateResults();
+                })
+                .fail(function () {
+                    console.log("error");
+                })
+                .always(function () {
+                    console.log(`loaded page - ${pageNumber}`);
+                });
+        }
+
+        // on search event
+        $(searchField).on('keypress', function (e) {
+
+            values = $(searchField).val();
+            // remove leading and trailing whitespaces
+            values = values.trim();
+            // replace spaces between words with '+' to fit API endpoints
+            values = values.replace(/\s/g, '+');
+
+            // if search bar is not empty
+            if (values != '') {
+                var keypressed = event.keyCode || event.which;
+                if (keypressed == 13) {
+                    // clear current results before get new ones
+                    clearResults();
+                    clearArray();
+
+                    // by default only get 1 page of results first
+                    pageNumber = 1;
+                    displayLoadingSign();
+                    getResults(values, pageNumber);
+                }
+            }
+        });
+
+        // on scroll to bottom event
+        $(resultContainer).scroll(function () {
+            if (values != '' && moreAvailable) {
+
+                let heightScrolled = $(resultContainer).scrollTop();
+                let elementHeight = $(resultContainer).innerHeight();
+                let contentHeight = $(resultContainer)[0].scrollHeight;
+                let reachedEndOfDiv = heightScrolled + elementHeight >= contentHeight;
+
+                // if reach the end of the div
+                if (reachedEndOfDiv) {
+                    if (doneLoading) {
+                        doneLoading = false;
+                        pageNumber += 1;
+                        displayLoadingSign();
+                        getResults(values, pageNumber);
+                    }
+                }
+            }
         });
     });
 </script>
