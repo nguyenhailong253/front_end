@@ -1,7 +1,5 @@
 
-// var $ = require('jquery')
 var pageNumber = 1;
-var resultArray = [];
 var wooliesArray = [];
 var aldiArray = [];
 var moreAvailable = true;
@@ -13,63 +11,83 @@ const ALDI = "Aldi";
 
 // clear result div
 function clearResults() {
-  // $(resultContainer).empty();
-  $('#result').empty();
+  $('#woolies').empty();
+  $('#aldi').empty();
 }
 
 // add data to result array
 function addToArray(objs) {
   objs.forEach(element => {
-    console.log(element.seller.name);
     if (element.seller.name === WOOLIES) {
       wooliesArray.push(element);
     } else {
       aldiArray.push(element);
     }
-    // resultArray.push(element);
   });
 }
 
 // clear result array
 function clearArray() {
-  resultArray.length = 0;
+  aldiArray.length = 0;
+  wooliesArray.length = 0;
 }
 
 // add loading sign to result div
-function displayLoadingSign() {
-  let loadingSign = document.getElementById("loading-sign");
-  if (!loadingSign) {
-    var resultElmt =
-      `<div id="loading-sign" class="loading-sign"><div><i class="fas fa-spinner fa-spin"></i></div><div>Searching...</div></div>`;
+function displayLoadingSign(tableId) {
+  let loadingSignWoolies = document.getElementById('#loading-sign-woolies');
+  let loadingSignAldi = document.getElementById('#loading-sign-aldi');
 
-    // $(resultContainer).append(resultElmt);
-    $('#result').append(resultElmt);
+  if (tableId === "#woolies") {
+    if (!loadingSignWoolies) {
+      var resultElmt =
+        `<div id="loading-sign" class="loading-sign-woolies"><div><i class="fas fa-spinner fa-spin"></i></div><div>Searching...</div></div>`;
+
+      $(tableId).append(resultElmt);
+    }
+  } else {
+    if (!loadingSignAldi) {
+      var resultElmt =
+        `<div id="loading-sign" class="loading-sign-aldi"><div><i class="fas fa-spinner fa-spin"></i></div><div>Searching...</div></div>`;
+
+      $(tableId).append(resultElmt);
+    }
   }
 }
 
 // remove loading sign from result div
-function removeLoadingSign() {
-  let loadingSign = document.getElementById("loading-sign");
+function removeLoadingSign(tableId) {
+  let loadingSign = $(tableId).find("#loading-sign");
   if (loadingSign) {
     loadingSign.remove();
   }
 }
 
 // add "item not found" to result div
-function displayNoneResult() {
-  let notFound = document.getElementById("not-found");
-  if (!notFound) {
-    var resultElmt =
-      `<div id="not-found" class="not-found">Item not found!</div>`;
+function displayNoneResult(tableId) {
+  let notFoundWoolies = document.getElementById('#not-found-woolies');
+  let notFoundAldi = document.getElementById('#not-found-aldi');
 
-    // $(resultContainer).append(resultElmt);
-    $('#result').append(resultElmt);
+  if (tableId === "#woolies") {
+    if (!notFoundWoolies) {
+      var resultElmt =
+        `<div id="not-found" class="not-found-woolies">Item not found!</div>`;
+
+      $(tableId).append(resultElmt);
+    }
+  } else {
+    if (!notFoundAldi) {
+      var resultElmt =
+        `<div id="not-found" class="not-found-aldi">Item not found!</div>`;
+
+      $(tableId).append(resultElmt);
+    }
   }
+
 }
 
 // remove "item not found" from result div
-function removeNoneResult() {
-  let notFound = document.getElementById("not-found");
+function removeNoneResult(tableId) {
+  let notFound = $(tableId).find("#not-found");
   if (notFound) {
     notFound.remove();
   }
@@ -83,8 +101,9 @@ function getResults(searchQuery, pageNumber = 1) {
   $.getJSON(jsonURL, function (data) {
     // if data exists
     if (data.count > 0) {
-      removeNoneResult();
-      if (resultArray.length <= data.count) {
+      removeNoneResult('#woolies');
+      removeNoneResult('#aldi');
+      if (aldiArray.length + wooliesArray.length <= data.count) {
         addToArray(data.results);
       }
 
@@ -92,7 +111,8 @@ function getResults(searchQuery, pageNumber = 1) {
         moreAvailable = false;
       }
     } else {
-      displayNoneResult();
+      displayNoneResult('#woolies');
+      displayNoneResult('#aldi');
     }
   })
     .done(function (data) {
@@ -108,32 +128,12 @@ function getResults(searchQuery, pageNumber = 1) {
 
 function populateResults() {
   // after done fetching results, remove loading sign
-  removeLoadingSign();
+  removeLoadingSign('#woolies');
+  removeLoadingSign('#aldi');
+  removeNoneResult('#woolies');
+  removeNoneResult('#aldi');
 
   // map out results
-  // resultArray.forEach(element => {
-  //   // if price does not have $, add $ to the front
-  //   // if price is null, display NA
-
-  //   var supermarket = element.seller.name;
-  //   var productName = element.name;
-  //   var price = "NA";
-  //   if (element.price) {
-  //     var currency = element.price[0] === "$" ? "" : "$"
-  //     price = currency + element.price;
-  //   }
-
-  //   var resultElmt =
-  //     `<tr class="grocery-data">
-  //           <td>${supermarket}</td>
-  //           <td>${productName}</td>
-  //           <td>${price}</td>
-  //     </tr>`;
-
-  //   // $(resultContainer).append(resultElmt);
-  //   $('#result').append(resultElmt);
-  // });
-
   // WOOLIES 
 
   if (wooliesArray.length) {
@@ -151,17 +151,15 @@ function populateResults() {
 
       var resultElmt =
         `<tr class="grocery-data">
+                <td>${supermarket}</td>
                 <td>${productName}</td>
                 <td>${price}</td>
           </tr>`;
 
-      // $(resultContainer).append(resultElmt);
       $('#woolies').append(resultElmt);
     });
   } else {
-    var resultElmt =
-      `<div id="not-found" class="not-found">Item not found!</div>`;
-    $('#woolies').append(resultElmt);
+    displayNoneResult('#woolies');
   }
 
   // ALDI
@@ -180,17 +178,16 @@ function populateResults() {
 
       var resultElmt =
         `<tr class="grocery-data">
+                <td>${supermarket}</td>
                 <td>${productName}</td>
                 <td>${price}</td>
           </tr>`;
 
-      // $(resultContainer).append(resultElmt);
       $('#aldi').append(resultElmt);
     });
   } else {
     var resultElmt =
-      `<div id="not-found" class="not-found">Item not found!</div>`;
-    $('#aldi').append(resultElmt);
+      displayNoneResult('#aldi');
   }
 
   // done loading
@@ -219,19 +216,20 @@ $(document).ready(function () {
         clearArray();
         // by default only get 1 page of results first
         pageNumber = 1;
-        displayLoadingSign();
+        displayLoadingSign('#woolies');
+        displayLoadingSign('#aldi');
         getResults(values, pageNumber);
       }
     }
   });
 
   // on scroll to bottom event
-  $('#result').scroll(function () {
+  $('#woolies').scroll(function () {
     if (values != '' && moreAvailable) {
 
-      let heightScrolled = $('#result').scrollTop();
-      let elementHeight = $('#result').innerHeight();
-      let contentHeight = $('#result')[0].scrollHeight;
+      let heightScrolled = $('#woolies').scrollTop();
+      let elementHeight = $('#woolies').innerHeight();
+      let contentHeight = $('#woolies')[0].scrollHeight;
       let reachedEndOfDiv = heightScrolled + elementHeight >= contentHeight;
 
       // if reach the end of the div
@@ -239,7 +237,27 @@ $(document).ready(function () {
         if (doneLoading) {
           doneLoading = false;
           pageNumber += 1;
-          displayLoadingSign();
+          displayLoadingSign('#woolies');
+          getResults(values, pageNumber);
+        }
+      }
+    }
+  });
+
+  $('#aldi').scroll(function () {
+    if (values != '' && moreAvailable) {
+
+      let heightScrolled = $('#aldi').scrollTop();
+      let elementHeight = $('#aldi').innerHeight();
+      let contentHeight = $('#aldi')[0].scrollHeight;
+      let reachedEndOfDiv = heightScrolled + elementHeight >= contentHeight;
+
+      // if reach the end of the div
+      if (reachedEndOfDiv) {
+        if (doneLoading) {
+          doneLoading = false;
+          pageNumber += 1;
+          displayLoadingSign('#aldi');
           getResults(values, pageNumber);
         }
       }
@@ -247,7 +265,7 @@ $(document).ready(function () {
   });
 });
 
-// export default {
+// module.exports = {
 //   // variables
 //   pageNumber: pageNumber,
 //   resultArray: resultArray,
@@ -268,11 +286,15 @@ $(document).ready(function () {
 // }
 
 // export {
+//   // variables
 //   pageNumber,
-//   resultArray,
+//   wooliesArray,
+//   aldiArray,
 //   moreAvailable,
 //   values,
 //   doneLoading,
+
+//   // functions
 //   clearResults,
 //   addToArray,
 //   clearArray,
@@ -282,4 +304,4 @@ $(document).ready(function () {
 //   removeNoneResult,
 //   getResults,
 //   populateResults,
-// }
+// };
