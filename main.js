@@ -27,9 +27,9 @@ function addToArray(objs) {
 }
 
 // clear result array
-function clearArray() {
-  aldiArray.length = 0;
-  wooliesArray.length = 0;
+function clearArray(arr1, arr2) {
+  arr1.length = 0;
+  arr2.length = 0;
 }
 
 // add loading sign to result div
@@ -134,7 +134,7 @@ function populateResults() {
   removeNoneResult('#aldi');
 
   // map out results
-  // WOOLIES 
+  // WOOLIES
 
   if (wooliesArray.length) {
     wooliesArray.forEach(element => {
@@ -213,7 +213,7 @@ $(document).ready(function () {
       if (keypressed == 13) {
         // clear current results before get new ones
         clearResults();
-        clearArray();
+        clearArray(aldiArray, wooliesArray);
         // by default only get 1 page of results first
         pageNumber = 1;
         displayLoadingSign('#woolies');
