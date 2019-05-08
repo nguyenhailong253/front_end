@@ -141,7 +141,6 @@ function populateResults() {
       // if price does not have $, add $ to the front
       // if price is null, display NA
 
-      var supermarket = element.seller.name;
       var productName = element.name;
       var price = "NA";
       if (element.price) {
@@ -151,7 +150,6 @@ function populateResults() {
 
       var resultElmt =
         `<tr class="grocery-data">
-                <td>${supermarket}</td>
                 <td>${productName}</td>
                 <td>${price}</td>
           </tr>`;
@@ -168,7 +166,6 @@ function populateResults() {
       // if price does not have $, add $ to the front
       // if price is null, display NA
 
-      var supermarket = element.seller.name;
       var productName = element.name;
       var price = "NA";
       if (element.price) {
@@ -178,7 +175,6 @@ function populateResults() {
 
       var resultElmt =
         `<tr class="grocery-data">
-                <td>${supermarket}</td>
                 <td>${productName}</td>
                 <td>${price}</td>
           </tr>`;
