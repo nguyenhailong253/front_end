@@ -207,6 +207,9 @@ $(document).ready(function () {
     if (values != '') {
       var keypressed = event.keyCode || event.which;
       if (keypressed == 13) {
+        $('#magnifying-glass').click();
+      }
+      $('#magnifying-glass').click(function () {
         // clear current results before get new ones
         clearResults();
         clearArray(aldiArray, wooliesArray);
@@ -215,7 +218,12 @@ $(document).ready(function () {
         displayLoadingSign('#woolies');
         displayLoadingSign('#aldi');
         getResults(values, pageNumber);
-      }
+
+        $('#whitespace').css('height', '40px');
+        $('#absolute-container p').css('display', 'none');
+        $('#flexContainer').css('display', 'flex');
+        $('h2').css('font-size', '2.5em');
+      });
     }
   });
 

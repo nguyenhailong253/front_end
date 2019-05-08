@@ -9,44 +9,51 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css"
         integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css?family=Heebo:100,300,400,500,700,800,900" rel="stylesheet">
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
     <script src="main.js"></script>
 </head>
 
 <body>
+    <div id="whitespace"></div>
     <div class="container">
-        <h2 align="center">Gro<span>Sale</span>ries</h2>
-        <p align="center">The best deals from your favourite grocers</p>
-        <div align="center">
-            <input type="text" name="search" id="search" placeholder="Enter grocery item here..."
-                class="form-control" />
-        </div>
-        <div id="logoContainer">
-            <img src="woolies.png" alt="Woolies" width="100">
-            <img src="aldi.jpg" alt="Aldi" width="80">
+        <div id="absolute-container">
+            <h2 align="center">Gro<span>Sale</span>ries</h2>
+            <p align="center">The best deals from your favourite grocers</p>
+            <div id="input-container" align="center">
+                <input type="text" name="search" id="search" placeholder="Enter grocery item here..."
+                    class="form-control" />
+                <img id="magnifying-glass" src="magnifyingGlass.png" alt="magnifyingGlass">
+            </div>
         </div>
         <div id="flexContainer">
-            <div class="table-wrapper-scroll-y my-custom-scrollbar">
-                <table class="table table-bordered">
-                    <thead>
-                        <tr>
-                            <th scope="col">Product</th>
-                            <th scope="col">Price</th>
-                        </tr>
-                    </thead>
-                    <tbody id="woolies"></tbody>
-                </table>
+            <div class="divTest">
+                <img src="woolies.png" alt="Woolies" width="100" height="80">
+                <div class="table-wrapper-scroll-y my-custom-scrollbar">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Product</th>
+                                <th scope="col">Price</th>
+                            </tr>
+                        </thead>
+                        <tbody id="woolies"></tbody>
+                    </table>
+                </div>
             </div>
-            <div class="table-wrapper-scroll-y my-custom-scrollbar">
-                <table class="table table-bordered">
-                    <thead>
-                        <tr>
-                            <th scope="col">Product</th>
-                            <th scope="col">Price</th>
-                        </tr>
-                    </thead>
-                    <tbody id="aldi"></tbody>
-                </table>
+            <div class="divTest">
+                <img src="aldi.jpg" alt="Aldi" width="80" height="100">
+                <div class="table-wrapper-scroll-y my-custom-scrollbar">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Product</th>
+                                <th scope="col">Price</th>
+                            </tr>
+                        </thead>
+                        <tbody id="aldi"></tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>

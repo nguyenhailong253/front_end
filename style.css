@@ -1,5 +1,11 @@
-body {
-    padding-top: 40px;
+* {
+    font-family: 'Heebo', sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+#whitespace {
+    height: 170px;
 }
 
 .container {
@@ -9,44 +15,75 @@ body {
 
 h2 {
     color: #83C73D;
-    margin-bottom: -3px;
+    margin-bottom: -2px;
+    font-weight: 600;
+    font-size: 3.2em;
 }
 
-p {
-    color: #538A1D;
+#absolute-container p {
+    color: #83C73D;
+    font-weight: 300;
+    font-size: 1.55em;
+    margin-bottom: 75px;
 }
 
 span {
     color: #538A1D;
 }
 
+#input-container {
+    margin-top: 20px;
+}
+
 #search {
-    max-width: 40em;
-    margin: 20px 0 70px 0;
+    max-width: 22em;
+    margin: 0;
+    border-radius: 40px;
+    border: none;
+    padding: 2px 0 0 30px;
+    height: 62px;
+    line-height: 28px;
+    box-shadow: 0px 0px 33px 3px rgba(0,0,0,0.07);
+    color: #989da0;
+    font-size: 1.2em;
+    font-weight: 400;
+}
+
+#search::placeholder {
+    color: #CED4DA;
+}
+
+#magnifying-glass {
+    position:relative;
+    width:30px;
+    left:170px;
+    bottom:46px;
+    cursor: pointer;
+}
+
+#flexContainer {
+    flex-wrap: wrap;
+    justify-content: space-around;
+    display: none;
+}
+
+.divTest {
+    max-width: 47%;
+    width: 47%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.divTest img {
+    margin-bottom: 20px;
 }
 
 .table-wrapper-scroll-y,
 .my-custom-scrollbar {
-    max-width: 48%;
-    width: 48%;
-    padding: 0;
-    margin: 0;
-}
-
-#flexContainer {
-    width: 100%;
     max-width: 100%;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-
-}
-
-#logoContainer {
-    display: flex;
-    justify-content: space-around;
-    align-items: flex-end;
-    margin-bottom: 20px;
+    width: 100%;
 }
 
 .my-custom-scrollbar {
@@ -56,14 +93,34 @@ span {
 }
 
 .table-wrapper-scroll-y {
-    display: block;
+    display: flex;
+    /* border-top: 1px solid #CED4DA; */
+}
+
+@media only screen and (max-width: 600px) {
+    #flexContainer {
+        flex-direction: column;
+        justify-content: space-between;
+    }
+    .divTest {
+        max-width: 100%;
+        width: 100%;
+        margin-bottom: 50px;
+    }
 }
 
 thead tr:nth-child(1) th {
-    background: white;
+    background: #e7f9d4;
+    color: #528A1C;
+    font-size: 1.1em;
+    padding-top: 16px;
     position: sticky;
     top: 0;
     z-index: 10;
-    outline: #DDE2E6 solid 2px;
+    outline: #e7f9d4 solid 2px;
     outline-offset: -1px;
+}
+
+tbody {
+    color:#6d7072;
 }
