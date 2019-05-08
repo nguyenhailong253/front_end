@@ -20,6 +20,10 @@ h2 {
     font-size: 3.2em;
 }
 
+a:link {
+    text-decoration: none;
+}
+
 #absolute-container p {
     color: #83C73D;
     font-weight: 300;
