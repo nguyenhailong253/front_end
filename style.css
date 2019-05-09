@@ -101,7 +101,13 @@ span {
     /* border-top: 1px solid #CED4DA; */
 }
 
-@media only screen and (max-width: 600px) {
+@media only screen 
+and (min-device-width : 375px) 
+and (max-device-width : 667px),
+(max-width : 600px),
+(min-device-width : 375px) 
+and (max-device-width : 812px)
+and (-webkit-device-pixel-ratio : 3) {
     #flexContainer {
         flex-direction: column;
         justify-content: space-between;
