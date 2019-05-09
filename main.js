@@ -18,6 +18,7 @@ function clearResults() {
 // add data to result array
 function addToArray(objs) {
   objs.forEach(element => {
+    console.log(element.seller.name);
     if (element.seller.name === WOOLIES) {
       wooliesArray.push(element);
     } else {
@@ -40,14 +41,14 @@ function displayLoadingSign(tableId) {
   if (tableId === "#woolies") {
     if (!loadingSignWoolies) {
       var resultElmt =
-        `<div id="loading-sign" class="loading-sign-woolies"><div><i class="fas fa-spinner fa-spin"></i></div><div>Searching...</div></div>`;
+        `<div id="loading-sign" class="loading-sign-woolies"></i><div>Searching  <i class="fas fa-spinner fa-spin"></div></div>`;
 
       $(tableId).append(resultElmt);
     }
   } else {
     if (!loadingSignAldi) {
       var resultElmt =
-        `<div id="loading-sign" class="loading-sign-aldi"><div><i class="fas fa-spinner fa-spin"></i></div><div>Searching...</div></div>`;
+        `<div id="loading-sign" class="loading-sign-aldi"><div>Searching  <i class="fas fa-spinner fa-spin"></i></div></div>`;
 
       $(tableId).append(resultElmt);
     }
@@ -94,10 +95,11 @@ function removeNoneResult(tableId) {
 }
 
 // request data from API
-function getResults(searchQuery, pageNumber = 1) {
+// seller by default is null, if seller = 1 => aldi, if seller = 2 => woolies
+function getResults(searchQuery, pageNumber=1, seller=null) {
   var jsonURL =
-    `https://swe20001.herokuapp.com/api/products/?search=${searchQuery}&page=${pageNumber}`;
-
+    `https://swe20001.herokuapp.com/api/products/?search=${searchQuery}&page=${pageNumber}${seller ? `&seller=${seller}` : ""}`;
+  console.log(jsonURL);
   $.getJSON(jsonURL, function (data) {
     // if data exists
     if (data.count > 0) {
@@ -106,7 +108,7 @@ function getResults(searchQuery, pageNumber = 1) {
       if (aldiArray.length + wooliesArray.length <= data.count) {
         addToArray(data.results);
       }
-
+      
       if (data.next == null) {
         moreAvailable = false;
       }
@@ -135,7 +137,7 @@ function populateResults() {
 
   // map out results
   // WOOLIES
-
+  console.log("woolies array length ", wooliesArray.length);
   if (wooliesArray.length) {
     wooliesArray.forEach(element => {
       // if price does not have $, add $ to the front
@@ -182,12 +184,27 @@ function populateResults() {
       $('#aldi').append(resultElmt);
     });
   } else {
-    var resultElmt =
-      displayNoneResult('#aldi');
+    displayNoneResult('#aldi');
   }
 
   // done loading
   doneLoading = true;
+}
+
+function fetchData() {
+  // clear current results before get new ones
+  clearResults();
+  clearArray(aldiArray, wooliesArray);
+  // by default only get 1 page of results first
+  pageNumber = 1;
+  displayLoadingSign('#woolies');
+  displayLoadingSign('#aldi');
+  getResults(values, pageNumber);
+
+  $('#whitespace').css('height', '40px');
+  $('#absolute-container p').css('display', 'none');
+  $('#flexContainer').css('display', 'flex');
+  $('h2').css('font-size', '2.5em');
 }
 
 $(document).ready(function () {
@@ -196,44 +213,34 @@ $(document).ready(function () {
   }); //forces requested pages not to be cached by the browser.
 
   // on search event
-  $('#search').on('keypress', function (e) {
+  $('#search').on('keyup', function (e) {
 
     values = $('#search').val();
     // remove leading and trailing whitespaces
     values = values.trim();
     // replace spaces between words with '+' to fit API endpoints
     values = values.replace(/\s/g, '+');
+
     // if search bar is not empty
     if (values != '') {
       var keypressed = event.keyCode || event.which;
       if (keypressed == 13) {
-        $('#magnifying-glass').click();
+        fetchData();
       }
-      $('#magnifying-glass').click(function () {
-        // clear current results before get new ones
-        clearResults();
-        clearArray(aldiArray, wooliesArray);
-        // by default only get 1 page of results first
-        pageNumber = 1;
-        displayLoadingSign('#woolies');
-        displayLoadingSign('#aldi');
-        getResults(values, pageNumber);
 
-        $('#whitespace').css('height', '40px');
-        $('#absolute-container p').css('display', 'none');
-        $('#flexContainer').css('display', 'flex');
-        $('h2').css('font-size', '2.5em');
+      $('#magnifying-glass').unbind().click(function () {
+          fetchData();
       });
     }
   });
 
   // on scroll to bottom event
-  $('#woolies').scroll(function () {
-    if (values != '' && moreAvailable) {
+  $('#woolies-wrapper').scroll(function () {
+      if (values != '' && moreAvailable) {
 
-      let heightScrolled = $('#woolies').scrollTop();
-      let elementHeight = $('#woolies').innerHeight();
-      let contentHeight = $('#woolies')[0].scrollHeight;
+      let heightScrolled = $('#woolies-wrapper').scrollTop();
+      let elementHeight = $('#woolies-wrapper').innerHeight();
+      let contentHeight = $('#woolies-wrapper')[0].scrollHeight;
       let reachedEndOfDiv = heightScrolled + elementHeight >= contentHeight;
 
       // if reach the end of the div
@@ -242,18 +249,17 @@ $(document).ready(function () {
           doneLoading = false;
           pageNumber += 1;
           displayLoadingSign('#woolies');
-          getResults(values, pageNumber);
+          getResults(values, pageNumber, 2);
         }
       }
     }
   });
 
-  $('#aldi').scroll(function () {
-    if (values != '' && moreAvailable) {
-
-      let heightScrolled = $('#aldi').scrollTop();
-      let elementHeight = $('#aldi').innerHeight();
-      let contentHeight = $('#aldi')[0].scrollHeight;
+  $('#aldi-wrapper').scroll(function () {
+      if (values != '' && moreAvailable) {
+      let heightScrolled = $('#aldi-wrapper').scrollTop();
+      let elementHeight = $('#aldi-wrapper').innerHeight();
+      let contentHeight = $('#aldi-wrapper')[0].scrollHeight;
       let reachedEndOfDiv = heightScrolled + elementHeight >= contentHeight;
 
       // if reach the end of the div
@@ -262,50 +268,9 @@ $(document).ready(function () {
           doneLoading = false;
           pageNumber += 1;
           displayLoadingSign('#aldi');
-          getResults(values, pageNumber);
+          getResults(values, pageNumber, 1);
         }
       }
     }
   });
 });
-
-// module.exports = {
-//   // variables
-//   pageNumber: pageNumber,
-//   resultArray: resultArray,
-//   moreAvailable: moreAvailable,
-//   values: values,
-//   doneLoading: doneLoading,
-
-//   // functions
-//   clearResults: clearResults,
-//   addToArray: addToArray,
-//   clearArray: clearArray,
-//   displayLoadingSign: displayLoadingSign,
-//   removeLoadingSign: removeLoadingSign,
-//   displayNoneResult: displayNoneResult,
-//   removeNoneResult: removeNoneResult,
-//   getResults: getResults,
-//   populateResults: populateResults,
-// }
-
-// export {
-//   // variables
-//   pageNumber,
-//   wooliesArray,
-//   aldiArray,
-//   moreAvailable,
-//   values,
-//   doneLoading,
-
-//   // functions
-//   clearResults,
-//   addToArray,
-//   clearArray,
-//   displayLoadingSign,
-//   removeLoadingSign,
-//   displayNoneResult,
-//   removeNoneResult,
-//   getResults,
-//   populateResults,
-// };
