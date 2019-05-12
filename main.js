@@ -98,7 +98,7 @@ function removeNoneResult(tableId) {
 // seller by default is null, if seller = 1 => aldi, if seller = 2 => woolies
 function getResults(searchQuery, pageNumber=1, seller=null) {
   var jsonURL =
-    `https://swe20001.herokuapp.com/api/products/?search=${searchQuery}&page=${pageNumber}${seller ? `&seller=${seller}` : ""}`;
+    `https://swe20001.herokuapp.com/api/products/?search=${searchQuery}&page=${pageNumber}&ordering=price${seller ? `&seller=${seller}` : ""}`;
   console.log(jsonURL);
   $.getJSON(jsonURL, function (data) {
     // if data exists
