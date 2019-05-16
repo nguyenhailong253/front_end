@@ -18,7 +18,6 @@ function clearResults() {
 // add data to result array
 function addToArray(objs) {
   objs.forEach(element => {
-    console.log(element.seller.name);
     if (element.seller.name === WOOLIES) {
       wooliesArray.push(element);
     } else {
@@ -98,7 +97,7 @@ function removeNoneResult(tableId) {
 // seller by default is null, if seller = 1 => aldi, if seller = 2 => woolies
 function getResults(searchQuery, pageNumber=1, seller=null) {
   var jsonURL =
-    `https://swe20001.herokuapp.com/api/products/?search=${searchQuery}&page=${pageNumber}&ordering=price${seller ? `&seller=${seller}` : ""}`;
+    `https://swe20001.herokuapp.com/api/products/?search=${searchQuery}&page=${pageNumber}&ordering=price${(seller === 1 || seller === 2) ? `&seller=${seller}` : ""}`;
   console.log(jsonURL);
   $.getJSON(jsonURL, function (data) {
     // if data exists
@@ -108,7 +107,6 @@ function getResults(searchQuery, pageNumber=1, seller=null) {
       if (aldiArray.length + wooliesArray.length <= data.count) {
         addToArray(data.results);
       }
-      
       if (data.next == null) {
         moreAvailable = false;
       }
@@ -122,6 +120,8 @@ function getResults(searchQuery, pageNumber=1, seller=null) {
     })
     .fail(function () {
       console.log("error");
+      removeLoadingSign('#aldi');
+      removeLoadingSign('#woolies');
     })
     .always(function () {
       console.log(`loaded page - ${pageNumber}`);
@@ -137,7 +137,6 @@ function populateResults() {
 
   // map out results
   // WOOLIES
-  console.log("woolies array length ", wooliesArray.length);
   if (wooliesArray.length) {
     wooliesArray.forEach(element => {
       // if price does not have $, add $ to the front
