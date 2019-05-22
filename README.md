@@ -13,4 +13,4 @@ GroSaleries is a price aggregator for Australian residents looking for cheapest 
 ![Screenshot](img/search.png)
 
 - Results
-![Screenshot](img/result.jpg)
+![Screenshot](img/result.png)
