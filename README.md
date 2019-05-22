@@ -10,7 +10,7 @@ GroSaleries is a price aggregator for Australian residents looking for cheapest 
 
 # Demo
 - Starting screen
-(https://github.com/nguyenhailong253/grosaleries-front-end/tree/master/img/search.png)
+![Screenshot](img/search.png)
 
 - Results
-(https://github.com/nguyenhailong253/grosaleries-front-end/tree/master/img/result.jpg)
+![Screenshot](img/result.jpg)
